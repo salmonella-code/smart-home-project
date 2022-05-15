@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:listen_me/screen/speach.dart';
 import 'package:listen_me/services/greetings.dart';
 import 'package:listen_me/theme.dart';
 import 'package:listen_me/widgets/weather.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Listen Me',
       theme: ThemeData(
           scaffoldBackgroundColor: backgroundColor,
           appBarTheme: AppBarTheme(
@@ -78,6 +79,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.speaker_phone),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const SpeechPage()));
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

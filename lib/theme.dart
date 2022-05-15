@@ -54,3 +54,15 @@ TextStyle weateherLocation = GoogleFonts.poppins(
   color: primaryTextColor,
   fontSize: 18,
 );
+
+TextStyle command = GoogleFonts.poppins(
+  color: primaryTextColor,
+  fontSize: 32,
+  fontWeight: FontWeight.w400,
+);
+
+TextStyle commandHighLight = GoogleFonts.poppins(
+  color: secondaryTextColor,
+  fontSize: 32,
+  fontWeight: FontWeight.w400,
+);
