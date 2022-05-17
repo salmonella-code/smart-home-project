@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:listen_me/screen/speach.dart';
@@ -7,7 +9,9 @@ import 'package:listen_me/services/greetings.dart';
 import 'package:listen_me/theme.dart';
 import 'package:listen_me/widgets/weather.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: bgSecondaryColor,
@@ -40,36 +44,73 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final database = FirebaseDatabase.instance.ref();
+
   @override
   void initState() {
     super.initState();
+    _activeListeners();
   }
 
-  bool? isSwitchlLamp1 = false;
-  bool? isSwitchlLamp2 = false;
-  bool? isSwitchlSock1 = false;
-  bool? isSwitchlSock2 = false;
+  late bool isSwitchlLamp1;
+  late bool isSwitchlLamp2;
+  late bool isSwitchlSock1;
+  late bool isSwitchlSock2;
+
+  void _activeListeners() {
+    database.child("lamp1").onValue.listen((event) {
+      final lamp1Data = event.snapshot.value;
+      setState(() {
+        isSwitchlLamp1 = (lamp1Data as bool?)!;
+      });
+    });
+
+    database.child("lamp2").onValue.listen((event) {
+      final lamp2Data = event.snapshot.value;
+      setState(() {
+        isSwitchlLamp2 = (lamp2Data as bool?)!;
+      });
+    });
+
+    database.child("soket1").onValue.listen((event) {
+      final soket1data = event.snapshot.value;
+      setState(() {
+        isSwitchlSock1 = (soket1data as bool?)!;
+      });
+    });
+
+    database.child("soket2").onValue.listen((event) {
+      final soket2data = event.snapshot.value;
+      setState(() {
+        isSwitchlSock2 = (soket2data as bool?)!;
+      });
+    });
+  }
 
   onChangeMethode1(bool newValue1) {
     setState(() {
+      database.child("lamp1").set(newValue1);
       isSwitchlLamp1 = newValue1;
     });
   }
 
   onChangeMethode2(bool newValue2) {
     setState(() {
+      database.child("lamp2").set(newValue2);
       isSwitchlLamp2 = newValue2;
     });
   }
 
   onChangeMethode3(bool newValue3) {
     setState(() {
+      database.child("soket1").set(newValue3);
       isSwitchlSock1 = newValue3;
     });
   }
 
   onChangeMethode4(bool newValue4) {
     setState(() {
+      database.child("soket2").set(newValue4);
       isSwitchlSock2 = newValue4;
     });
   }
@@ -125,13 +166,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSpacing: 10,
                 crossAxisCount: 2,
                 children: <Widget>[
-                  cardDevice(isSwitchlLamp1!, "Lampu 1", Icons.lightbulb,
+                  cardDevice(isSwitchlLamp1, "Lampu 1", Icons.lightbulb,
                       onChangeMethode1),
-                  cardDevice(isSwitchlLamp2!, "Lampu 2", Icons.lightbulb,
+                  cardDevice(isSwitchlLamp2, "Lampu 2", Icons.lightbulb,
                       onChangeMethode2),
-                  cardDevice(isSwitchlSock1!, "Soket 1",
+                  cardDevice(isSwitchlSock1, "Soket 1",
                       Icons.electrical_services, onChangeMethode3),
-                  cardDevice(isSwitchlSock2!, "Soket 2",
+                  cardDevice(isSwitchlSock2, "Soket 2",
                       Icons.electrical_services, onChangeMethode4),
                 ],
               )
