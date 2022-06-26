@@ -23,10 +23,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _activeListeners();
   }
 
-  late bool isSwitchlLamp1;
-  late bool isSwitchlLamp2;
-  late bool isSwitchlSock1;
-  late bool isSwitchlSock2;
+  late bool? isSwitchlLamp1 = false;
+  late bool? isSwitchlLamp2 = false;
+  late bool? isSwitchlSock1 = false;
+  late bool? isSwitchlSock2 = false;
 
   void _activeListeners() {
     database.child("lamp1").onValue.listen((event) {
@@ -133,13 +133,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSpacing: 10,
                 crossAxisCount: 2,
                 children: <Widget>[
-                  cardDevice(isSwitchlLamp1, "Lampu 1", Icons.lightbulb,
+                  cardDevice(isSwitchlLamp1!, "Lampu 1", Icons.lightbulb,
                       onChangeMethode1),
-                  cardDevice(isSwitchlLamp2, "Lampu 2", Icons.lightbulb,
+                  cardDevice(isSwitchlLamp2!, "Lampu 2", Icons.lightbulb,
                       onChangeMethode2),
-                  cardDevice(isSwitchlSock1, "Soket 1",
+                  cardDevice(isSwitchlSock1!, "Soket 1",
                       Icons.electrical_services, onChangeMethode3),
-                  cardDevice(isSwitchlSock2, "Soket 2",
+                  cardDevice(isSwitchlSock2!, "Soket 2",
                       Icons.electrical_services, onChangeMethode4),
                 ],
               )
