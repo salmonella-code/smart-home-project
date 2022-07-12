@@ -17,47 +17,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final database = FirebaseDatabase.instance.ref();
 
-  @override
-  void initState() {
-    super.initState();
-    _activeListeners();
-  }
-
-  late bool? isSwitchlLamp1 = false;
-  late bool? isSwitchlLamp2 = false;
-  late bool? isSwitchlSock1 = false;
-  late bool? isSwitchlSock2 = false;
-
-  void _activeListeners() {
-    database.child("lamp1").onValue.listen((event) {
-      final lamp1Data = event.snapshot.value;
-      setState(() {
-        isSwitchlLamp1 = (lamp1Data as bool?)!;
-      });
-    });
-
-    database.child("lamp2").onValue.listen((event) {
-      final lamp2Data = event.snapshot.value;
-      setState(() {
-        isSwitchlLamp2 = (lamp2Data as bool?)!;
-      });
-    });
-
-    database.child("soket1").onValue.listen((event) {
-      final soket1data = event.snapshot.value;
-      setState(() {
-        isSwitchlSock1 = (soket1data as bool?)!;
-      });
-    });
-
-    database.child("soket2").onValue.listen((event) {
-      final soket2data = event.snapshot.value;
-      setState(() {
-        isSwitchlSock2 = (soket2data as bool?)!;
-      });
-    });
-  }
-
   onChangeMethode1(bool newValue1) {
     setState(() {
       database.child("lamp1").set(newValue1);
@@ -91,8 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.speaker_phone),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const SpeechPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SpeechPage(),
+                ),
+              );
             },
           ),
         ],
@@ -126,23 +89,36 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: WeatherWidget(),
                 ),
               ),
-              GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 2,
-                children: <Widget>[
-                  cardDevice(isSwitchlLamp1!, "Lampu 1", Icons.lightbulb,
-                      onChangeMethode1),
-                  cardDevice(isSwitchlLamp2!, "Lampu 2", Icons.lightbulb,
-                      onChangeMethode2),
-                  cardDevice(isSwitchlSock1!, "Soket 1",
-                      Icons.electrical_services, onChangeMethode3),
-                  cardDevice(isSwitchlSock2!, "Soket 2",
-                      Icons.electrical_services, onChangeMethode4),
-                ],
-              )
+              StreamBuilder(
+                stream: database.onValue,
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    final data = snapshot.data!.snapshot.value;
+                    return GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 2,
+                      children: <Widget>[
+                        cardDevice(data['lamp1'], "Lampu 1", Icons.lightbulb,
+                            onChangeMethode1),
+                        cardDevice(data['lamp2'], "Lampu 2", Icons.lightbulb,
+                            onChangeMethode2),
+                        cardDevice(data['soket1'], "Soket 1",
+                            Icons.electrical_services, onChangeMethode3),
+                        cardDevice(data['soket2'], "Soket 2",
+                            Icons.electrical_services, onChangeMethode4),
+                      ],
+                    );
+                  } else {
+                    return const Center(
+                        child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xff344a54))));
+                  }
+                },
+              ),
             ],
           ),
         ),
